@@ -6,78 +6,103 @@
     <title>PackSmart - Tu Maleta Inteligente</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        .item-checked { text-decoration: line-through; color: #94a3b8; }
+        body { font-family: 'Inter', sans-serif; }
+        .item-checked { text-decoration: line-through; opacity: 0.5; }
+        /* Animación suave para la lista */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-10">
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
-        <header class="bg-blue-600 p-6 text-white text-center rounded-b-3xl">
-            <h1 class="text-3xl font-extrabold tracking-tight">PackSmart ✈️</h1>
-            <p class="text-blue-100 text-sm">Prepara tu maleta sin olvidos</p>
-        </header>
+<body class="bg-slate-50 min-h-screen">
 
-        <div class="p-6 space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">¿A dónde vas?</label>
-                <input id="ciudad" type="text" placeholder="Ej: San José, Bogotá, Madrid..." 
-                       class="w-full mt-1 border-2 border-gray-200 p-3 rounded-xl focus:border-blue-500 outline-none transition">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Tipo de Viaje</label>
-                <select id="actividad" class="w-full mt-1 border-2 border-gray-200 p-3 rounded-xl outline-none">
-                    <option value="senderismo">🥾 Senderismo / Montaña</option>
-                    <option value="playa">🏖️ Playa / Relax</option>
-                    <option value="urbano">🏙️ Ciudad / Turismo</option>
-                </select>
-            </div>
-
-            <button onclick="generarLista()" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition">
-                Generar Mi Lista
-            </button>
-        </div>
-
-        <div id="seccionLista" class="p-6 hidden">
-            <div class="flex justify-between items-center border-b pb-2 mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Tu Equipaje</h2>
-                <span id="climaInfo" class="text-sm font-semibold text-orange-500"></span>
-            </div>
+    <div class="max-w-6xl mx-auto md:py-10">
+        
+        <div class="bg-white md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[90vh]">
             
-            <ul id="contenedorItems" class="space-y-3">
-                </ul>
+            <aside class="w-full md:w-1/3 bg-blue-600 p-8 text-white">
+                <div class="mb-10 text-center md:text-left">
+                    <h1 class="text-4xl font-extrabold tracking-tight">PackSmart ✈️</h1>
+                    <p class="text-blue-100 mt-2">La maleta inteligente para tus rutas y viajes.</p>
+                </div>
 
-            <div class="mt-10 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-2xl">
-                <p class="text-xs font-bold text-yellow-700 uppercase">Recomendación Pro:</p>
-                <a href="TU_LINK_AFILIADO_AMAZON" target="_blank" class="text-sm text-blue-600 underline font-medium">
-                    ¿Te falta un protector solar o powerbank? Cómpralo aquí.
-                </a>
-            </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">¿A dónde vas?</label>
+                        <input id="ciudad" type="text" placeholder="Ej: San José, Bogotá..." 
+                               class="w-full p-3 rounded-xl text-gray-900 border-none focus:ring-4 focus:ring-blue-300 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tipo de Actividad</label>
+                        <select id="actividad" class="w-full p-3 rounded-xl text-gray-900 border-none outline-none">
+                            <option value="senderismo">🥾 Senderismo / Montaña</option>
+                            <option value="playa">🏖️ Playa / Relax</option>
+                            <option value="urbano">🏙️ Ciudad / Turismo</option>
+                        </select>
+                    </div>
+
+                    <button onclick="generarLista()" 
+                            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-95">
+                        Generar Mi Lista
+                    </button>
+                </div>
+
+                <div class="mt-12 p-4 bg-blue-700/50 rounded-2xl text-xs text-blue-100 border border-blue-500">
+                    <p>💡 <strong>Tip de viaje:</strong> Recuerda siempre revisar los requisitos de entrada de tu destino.</p>
+                </div>
+            </aside>
+
+            <main class="w-full md:w-2/3 p-8 bg-white">
+                <div id="placeholder" class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
+                    <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <p class="text-lg">Ingresa los datos para ver tu lista</p>
+                </div>
+
+                <div id="seccionLista" class="hidden fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <h2 class="text-2xl font-extrabold text-gray-800">Tu Equipaje <span id="nombreCiudad" class="text-blue-600"></span></h2>
+                        <span id="climaInfo" class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full font-bold text-sm"></span>
+                    </div>
+                    
+                    <ul id="contenedorItems" class="grid grid-cols-1 md:grid-cols-2 gap-3"></ul>
+
+                    <div class="mt-12 p-6 bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200">
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Recomendaciones de Expertos</h3>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white p-3 rounded-xl shadow-sm">🛒</div>
+                            <div>
+                                <p class="text-sm text-gray-700">¿Te falta equipo de calidad?</p>
+                                <a href="TU_LINK_AFILIADO" target="_blank" class="text-blue-600 font-bold hover:underline">Ver ofertas en Amazon →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <script>
         const REGLAS = {
-            base: ["Pasaporte", "Cargador", "Medicamentos", "Ropa interior", "Desodorante"],
+            base: ["Pasaporte", "Cargador", "Medicamentos", "Ropa interior", "Desodorante", "Corta uñas"],
             clima: {
-                frio: ["Abrigo", "Bufanda", "Medias térmicas"],
-                calor: ["Ropa ligera", "Lentes de sol", "Gorra"]
+                frio: ["Abrigo térmico", "Bufanda", "Medias gruesas", "Gorro"],
+                calor: ["Camisetas ligeras", "Lentes de sol", "Sandalias", "Gorra"]
             },
             actividades: {
-                senderismo: ["Botas", "Capa de lluvia", "Repelente", "Bastones"],
-                playa: ["Traje de baño", "Toalla", "Bloqueador"],
-                urbano: ["Zapatos cómodos", "Cámara", "Mapa/Guía"]
+                senderismo: ["Botas de montaña", "Capa de lluvia", "Repelente", "Bastones de apoyo", "Camelback"],
+                playa: ["Traje de baño", "Toalla de microfibra", "Bloqueador solar", "Bolsa impermeable"],
+                urbano: ["Zapatos cómodos", "Batería externa", "Guía del lugar", "Mochila pequeña"]
             }
         };
 
         async function generarLista() {
             const ciudad = document.getElementById('ciudad').value;
             const actividad = document.getElementById('actividad').value;
-            if(!ciudad) return alert("Escribe una ciudad");
+            if(!ciudad) return alert("Por favor, escribe una ciudad");
 
-            // Simulación de Clima (Para no depender de API KEY en este ejemplo rápido, puedes activarla luego)
-            // Aquí llamarías a OpenWeatherMap
+            // Simulación de Clima
             const tempSimulada = 18; 
 
             let listaTotal = [...REGLAS.base, ...REGLAS.actividades[actividad]];
@@ -89,16 +114,23 @@
 
             listaTotal.forEach(item => {
                 const li = document.createElement('li');
-                li.className = "flex items-center space-x-3 p-2 bg-slate-50 rounded-lg";
+                li.className = "flex items-center space-x-3 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-blue-300 transition-colors cursor-pointer";
+                li.onclick = function() { 
+                    const cb = this.querySelector('input');
+                    cb.checked = !cb.checked;
+                    this.classList.toggle('item-checked');
+                };
                 li.innerHTML = `
-                    <input type="checkbox" class="w-5 h-5" onchange="this.nextElementSibling.classList.toggle('item-checked')">
+                    <input type="checkbox" class="w-5 h-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500">
                     <span class="text-gray-700 font-medium">${item}</span>
                 `;
                 contenedor.appendChild(li);
             });
 
+            document.getElementById('placeholder').classList.add('hidden');
             document.getElementById('seccionLista').classList.remove('hidden');
-            document.getElementById('climaInfo').innerText = `Temp estimada: ${tempSimulada}°C`;
+            document.getElementById('nombreCiudad').innerText = `- ${ciudad}`;
+            document.getElementById('climaInfo').innerText = `☁️ Pronóstico: ${tempSimulada}°C`;
         }
     </script>
 </body>
