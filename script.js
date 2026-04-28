@@ -1,81 +1,74 @@
-// 1. Diccionario de Reglas
 const REGLAS = {
-    base: ["Pasaporte", "Cargador", "Medicamentos", "Ropa interior", "Desodorante", "Corta uñas"],
+    base: ["Pasaporte/ID", "Cargador", "Botiquín", "Ropa interior", "Desodorante", "Corta uñas"],
     clima: {
         frio: ["Abrigo térmico", "Bufanda", "Medias gruesas", "Gorro"],
         calor: ["Camisetas ligeras", "Lentes de sol", "Sandalias", "Gorra"]
     },
     actividades: {
-        senderismo: ["Botas de montaña", "Capa de lluvia", "Repelente", "Bastones de apoyo", "Camelback"],
-        playa: ["Traje de baño", "Toalla de microfibra", "Bloqueador solar", "Bolsa impermeable"],
-        urbano: ["Zapatos cómodos", "Batería externa", "Guía del lugar", "Mochila pequeña"]
+        senderismo: ["Botas de montaña", "Capa de lluvia", "Repelente", "Bastones", "Camelback"],
+        playa: ["Traje de baño", "Toalla microfibra", "Bloqueador", "Bolsa impermeable"],
+        urbano: ["Zapatos cómodos", "Batería externa", "Guía", "Mochila pequeña"]
     }
 };
 
-// 2. Función Principal
 async function generarLista() {
-    const ciudad = document.getElementById('ciudad').value;
+    const ciudadInput = document.getElementById('ciudad').value;
     const actividad = document.getElementById('actividad').value;
-    const API_KEY = '43796d67bb5bb4151478ea63a516276d'; // <--- Reemplaza con tu llave de OpenWeather
+    const API_KEY = '43796d67bb5bb4151478ea63a516276d'; 
 
-    if (!ciudad) return alert("Por favor, escribe una ciudad");
+    if (!ciudadInput) return alert("Por favor, escribe una ciudad");
 
     try {
-        // Llamada real a la API
-        const respuesta = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&units=metric&appid=${API_KEY}&lang=es`);
+        const respuesta = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ciudadInput}&units=metric&appid=${API_KEY}&lang=es`);
         
         if (!respuesta.ok) throw new Error("Ciudad no encontrada");
         
-        const datosClima = await respuesta.json();
-        const tempReal = Math.round(datosClima.main.temp);
-        const descripcion = datosClima.weather[0].description;
+        const datos = await respuesta.json();
+        const tempReal = Math.round(datos.main.temp);
+        const desc = datos.weather[0].description;
+        const nombreCiudadReal = datos.name;
 
-        // Construir Lista
         let listaTotal = [...REGLAS.base, ...REGLAS.actividades[actividad]];
         if (tempReal < 16) listaTotal.push(...REGLAS.clima.frio);
         if (tempReal > 24) listaTotal.push(...REGLAS.clima.calor);
 
-        renderizarItems(listaTotal, ciudad, tempReal, descripcion);
+        renderizarItems(listaTotal, nombreCiudadReal, tempReal, desc);
 
     } catch (error) {
-        alert("No pudimos encontrar esa ciudad. Revisa la ortografía.");
+        alert("Error: No pudimos obtener el clima. Intenta con 'Ciudad, País' (ej: San José, CR)");
         console.error(error);
     }
 }
 
-// 3. Función de Renderizado
 function renderizarItems(lista, ciudad, temp, desc) {
     const contenedor = document.getElementById('contenedorItems');
     contenedor.innerHTML = '';
 
     lista.forEach((item, index) => {
-        const idUnico = `item-${index}`;
-        const li = document.createElement('li');
-        
-        // Recuperar estado guardado
-        const estaChequeado = localStorage.getItem(ciudad + item) === 'true';
+        const keyGuardado = `packsmart_${ciudad}_${item}`;
+        const estaChequeado = localStorage.getItem(keyGuardado) === 'true';
 
+        const li = document.createElement('li');
         li.className = `flex items-center space-x-3 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-blue-300 transition-colors cursor-pointer ${estaChequeado ? 'item-checked' : ''}`;
         
         li.innerHTML = `
-            <input type="checkbox" ${estaChequeado ? 'checked' : ''} class="w-5 h-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500">
+            <input type="checkbox" ${estaChequeado ? 'checked' : ''} class="w-5 h-5 rounded-full border-gray-300 text-blue-600 pointer-events-none">
             <span class="text-gray-700 font-medium">${item}</span>
         `;
 
-        // Evento para guardar progreso
         li.onclick = function() {
             const cb = this.querySelector('input');
             cb.checked = !cb.checked;
             this.classList.toggle('item-checked');
-            localStorage.setItem(ciudad + item, cb.checked);
+            localStorage.setItem(keyGuardado, cb.checked);
         };
 
         contenedor.appendChild(li);
     });
 
-    // Actualizar UI
     document.getElementById('placeholder').classList.add('hidden');
     document.getElementById('seccionLista').classList.remove('hidden');
     document.getElementById('nombreCiudad').innerText = `- ${ciudad}`;
-    document.getElementById('climaInfo').innerText = `${temp}°C - ${desc}`;
+    document.getElementById('climaInfo').innerText = `${temp}°C`;
+    document.getElementById('climaDesc').innerText = desc;
 }
