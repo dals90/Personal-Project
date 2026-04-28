@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PackSmart - Tu Maleta Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .item-checked { text-decoration: line-through; color: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen pb-10">
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
+        <header class="bg-blue-600 p-6 text-white text-center rounded-b-3xl">
+            <h1 class="text-3xl font-extrabold tracking-tight">PackSmart ✈️</h1>
+            <p class="text-blue-100 text-sm">Prepara tu maleta sin olvidos</p>
+        </header>
+
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">¿A dónde vas?</label>
+                <input id="ciudad" type="text" placeholder="Ej: San José, Bogotá, Madrid..." 
+                       class="w-full mt-1 border-2 border-gray-200 p-3 rounded-xl focus:border-blue-500 outline-none transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Tipo de Viaje</label>
+                <select id="actividad" class="w-full mt-1 border-2 border-gray-200 p-3 rounded-xl outline-none">
+                    <option value="senderismo">🥾 Senderismo / Montaña</option>
+                    <option value="playa">🏖️ Playa / Relax</option>
+                    <option value="urbano">🏙️ Ciudad / Turismo</option>
+                </select>
+            </div>
+
+            <button onclick="generarLista()" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition">
+                Generar Mi Lista
+            </button>
+        </div>
+
+        <div id="seccionLista" class="p-6 hidden">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Tu Equipaje</h2>
+                <span id="climaInfo" class="text-sm font-semibold text-orange-500"></span>
+            </div>
+            
+            <ul id="contenedorItems" class="space-y-3">
+                </ul>
+
+            <div class="mt-10 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-2xl">
+                <p class="text-xs font-bold text-yellow-700 uppercase">Recomendación Pro:</p>
+                <a href="TU_LINK_AFILIADO_AMAZON" target="_blank" class="text-sm text-blue-600 underline font-medium">
+                    ¿Te falta un protector solar o powerbank? Cómpralo aquí.
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const REGLAS = {
+            base: ["Pasaporte", "Cargador", "Medicamentos", "Ropa interior", "Desodorante"],
+            clima: {
+                frio: ["Abrigo", "Bufanda", "Medias térmicas"],
+                calor: ["Ropa ligera", "Lentes de sol", "Gorra"]
+            },
+            actividades: {
+                senderismo: ["Botas", "Capa de lluvia", "Repelente", "Bastones"],
+                playa: ["Traje de baño", "Toalla", "Bloqueador"],
+                urbano: ["Zapatos cómodos", "Cámara", "Mapa/Guía"]
+            }
+        };
+
+        async function generarLista() {
+            const ciudad = document.getElementById('ciudad').value;
+            const actividad = document.getElementById('actividad').value;
+            if(!ciudad) return alert("Escribe una ciudad");
+
+            // Simulación de Clima (Para no depender de API KEY en este ejemplo rápido, puedes activarla luego)
+            // Aquí llamarías a OpenWeatherMap
+            const tempSimulada = 18; 
+
+            let listaTotal = [...REGLAS.base, ...REGLAS.actividades[actividad]];
+            if(tempSimulada < 15) listaTotal.push(...REGLAS.clima.frio);
+            if(tempSimulada > 22) listaTotal.push(...REGLAS.clima.calor);
+
+            const contenedor = document.getElementById('contenedorItems');
+            contenedor.innerHTML = '';
+
+            listaTotal.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "flex items-center space-x-3 p-2 bg-slate-50 rounded-lg";
+                li.innerHTML = `
+                    <input type="checkbox" class="w-5 h-5" onchange="this.nextElementSibling.classList.toggle('item-checked')">
+                    <span class="text-gray-700 font-medium">${item}</span>
+                `;
+                contenedor.appendChild(li);
+            });
+
+            document.getElementById('seccionLista').classList.remove('hidden');
+            document.getElementById('climaInfo').innerText = `Temp estimada: ${tempSimulada}°C`;
+        }
+    </script>
+</body>
+</html>
