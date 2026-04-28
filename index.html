@@ -10,9 +10,11 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .item-checked { text-decoration: line-through; opacity: 0.5; }
-        /* Animación suave para la lista */
         .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
@@ -56,25 +58,34 @@
 
             <main class="w-full md:w-2/3 p-8 bg-white">
                 <div id="placeholder" class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
-                    <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    <p class="text-lg">Ingresa los datos para ver tu lista</p>
+                    <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <p class="text-lg text-center">Ingresa los datos para ver tu lista personalizada</p>
                 </div>
 
                 <div id="seccionLista" class="hidden fade-in">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                        <h2 class="text-2xl font-extrabold text-gray-800">Tu Equipaje <span id="nombreCiudad" class="text-blue-600"></span></h2>
-                        <span id="climaInfo" class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full font-bold text-sm"></span>
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b pb-6">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-gray-800 tracking-tight">Tu Equipaje <span id="nombreCiudad" class="text-blue-600"></span></h2>
+                            <p id="climaDesc" class="text-gray-500 capitalize italic"></p>
+                        </div>
+                        <span id="climaInfo" class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full font-bold text-sm shadow-sm border border-orange-200"></span>
                     </div>
                     
-                    <ul id="contenedorItems" class="grid grid-cols-1 md:grid-cols-2 gap-3"></ul>
+                    <ul id="contenedorItems" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        </ul>
 
-                    <div class="mt-12 p-6 bg-slate-100 rounded-3xl border-2 border-dashed border-slate-200">
-                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Recomendaciones de Expertos</h3>
+                    <div class="mt-12 p-6 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Recomendaciones de Expertos</h3>
                         <div class="flex items-center space-x-4">
-                            <div class="bg-white p-3 rounded-xl shadow-sm">🛒</div>
+                            <div class="bg-white p-4 rounded-2xl shadow-md text-2xl">🛍️</div>
                             <div>
-                                <p class="text-sm text-gray-700">¿Te falta equipo de calidad?</p>
-                                <a href="TU_LINK_AFILIADO" target="_blank" class="text-blue-600 font-bold hover:underline">Ver ofertas en Amazon →</a>
+                                <p class="text-sm text-gray-700 leading-tight">¿Necesitas renovar tu equipo?</p>
+                                <a href="TU_LINK_AFILIADO" target="_blank" class="text-blue-600 font-bold hover:underline inline-flex items-center mt-1">
+                                    Ver ofertas en Amazon 
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -83,55 +94,6 @@
         </div>
     </div>
 
-    <script>
-        const REGLAS = {
-            base: ["Pasaporte", "Cargador", "Medicamentos", "Ropa interior", "Desodorante", "Corta uñas"],
-            clima: {
-                frio: ["Abrigo térmico", "Bufanda", "Medias gruesas", "Gorro"],
-                calor: ["Camisetas ligeras", "Lentes de sol", "Sandalias", "Gorra"]
-            },
-            actividades: {
-                senderismo: ["Botas de montaña", "Capa de lluvia", "Repelente", "Bastones de apoyo", "Camelback"],
-                playa: ["Traje de baño", "Toalla de microfibra", "Bloqueador solar", "Bolsa impermeable"],
-                urbano: ["Zapatos cómodos", "Batería externa", "Guía del lugar", "Mochila pequeña"]
-            }
-        };
-
-        async function generarLista() {
-            const ciudad = document.getElementById('ciudad').value;
-            const actividad = document.getElementById('actividad').value;
-            if(!ciudad) return alert("Por favor, escribe una ciudad");
-
-            // Simulación de Clima
-            const tempSimulada = 18; 
-
-            let listaTotal = [...REGLAS.base, ...REGLAS.actividades[actividad]];
-            if(tempSimulada < 15) listaTotal.push(...REGLAS.clima.frio);
-            if(tempSimulada > 22) listaTotal.push(...REGLAS.clima.calor);
-
-            const contenedor = document.getElementById('contenedorItems');
-            contenedor.innerHTML = '';
-
-            listaTotal.forEach(item => {
-                const li = document.createElement('li');
-                li.className = "flex items-center space-x-3 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-blue-300 transition-colors cursor-pointer";
-                li.onclick = function() { 
-                    const cb = this.querySelector('input');
-                    cb.checked = !cb.checked;
-                    this.classList.toggle('item-checked');
-                };
-                li.innerHTML = `
-                    <input type="checkbox" class="w-5 h-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <span class="text-gray-700 font-medium">${item}</span>
-                `;
-                contenedor.appendChild(li);
-            });
-
-            document.getElementById('placeholder').classList.add('hidden');
-            document.getElementById('seccionLista').classList.remove('hidden');
-            document.getElementById('nombreCiudad').innerText = `- ${ciudad}`;
-            document.getElementById('climaInfo').innerText = `☁️ Pronóstico: ${tempSimulada}°C`;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
