@@ -20,6 +20,7 @@ async function generarLista() {
 
     try {
         const respuesta = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ciudadInput}&units=metric&appid=${API_KEY}&lang=es`);
+        console.log(' ** RESPUESTA ** ' + respuesta);
         
         if (!respuesta.ok) throw new Error("Ciudad no encontrada");
         
