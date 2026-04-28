@@ -16,7 +16,7 @@ const REGLAS = {
 async function generarLista() {
     const ciudad = document.getElementById('ciudad').value;
     const actividad = document.getElementById('actividad').value;
-    const API_KEY = 'TU_API_KEY_AQUI'; // <--- Reemplaza con tu llave de OpenWeather
+    const API_KEY = 'ce7e043c0428f6a3a02cde6b04761ebf'; // <--- Reemplaza con tu llave de OpenWeather
 
     if (!ciudad) return alert("Por favor, escribe una ciudad");
 
